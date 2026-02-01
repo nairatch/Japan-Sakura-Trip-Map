@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Japan Sakura Trip Map</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+  <style>
+    #map { height: 100vh; }
+    body { margin:0; }
+  </style>
+</head>
+<body>
+
+<div id="map"></div>
+
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+<script>
+  // Initialize map
+  var map = L.map('map').setView([35.68, 139.76], 5); // center of Japan
+
+  // Add OpenStreetMap tiles
+  L.tileLayer('https://{s}.tile.openstreetmap.fr/osmfr/{z}/{x}/{y}.png', {
+  maxZoom: 20,
+  attribution: '&copy; OpenStreetMap contributors (English labels)'
+}).addTo(map);
+
+
+  // Function to create colored markers
+  function getColor(city) {
+    switch(city) {
+      case "Osaka": return "red";
+      case "Kanazawa": return "orange";
+      case "Kyoto": return "pink";
+      case "Hiroshima": return "green";
+      case "Nagasaki": return "purple";
+      case "Hakone": return "brown";
+      case "Tokyo": return "blue";
+      case "Kamakura": return "blue";
+      default: return "gray";
+    }
+  }
+
+  // GeoJSON with city info
+  var tripData = {
+    "type": "FeatureCollection",
+    "features": [
+      {"type":"Feature","properties":{"name":"Hotel Monterey Grasmere Osaka","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.5025,34.6677]}},
+      {"type":"Feature","properties":{"name":"Dotonbori, Osaka","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.5022,34.6687]}},
+      {"type":"Feature","properties":{"name":"Osaka Castle","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.5259,34.6873]}},
+      {"type":"Feature","properties":{"name":"Kuromon Market, Osaka","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.5065,34.6664]}},
+      {"type":"Feature","properties":{"name":"Shinsekai, Osaka","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.5061,34.6546]}},
+      {"type":"Feature","properties":{"name":"Todai-ji Temple, Nara","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.8395,34.6851]}},
+      {"type":"Feature","properties":{"name":"Nara Deer Park","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.8413,34.6852]}},
+      {"type":"Feature","properties":{"name":"Kofuku-ji Temple, Nara","city":"Osaka"},"geometry":{"type":"Point","coordinates":[135.8393,34.6858]}},
+      {"type":"Feature","properties":{"name":"Himeji Castle","city":"Osaka"},"geometry":{"type":"Point","coordinates":[134.6939,34.8394]}},
+      {"type":"Feature","properties":{"name":"Kenroku-en Garden, Kanazawa","city":"Kanazawa"},"geometry":{"type":"Point","coordinates":[136.6622,36.5612]}},
+      {"type":"Feature","properties":{"name":"Higashi Chaya District, Kanazawa","city":"Kanazawa"},"geometry":{"type":"Point","coordinates":[136.6665,36.5685]}},
+      {"type":"Feature","properties":{"name":"Nagamachi Samurai District, Kanazawa","city":"Kanazawa"},"geometry":{"type":"Point","coordinates":[136.6623,36.5652]}},
+      {"type":"Feature","properties":{"name":"Shirakawa-go","city":"Kanazawa"},"geometry":{"type":"Point","coordinates":[136.8993,36.2611]}},
+      {"type":"Feature","properties":{"name":"Kyoto - Gion District","city":"Kyoto"},"geometry":{"type":"Point","coordinates":[135.7788,35.0037]}},
+      {"type":"Feature","properties":{"name":"Fushimi Inari Taisha, Kyoto","city":"Kyoto"},"geometry":{"type":"Point","coordinates":[135.7727,34.9671]}},
+      {"type":"Feature","properties":{"name":"Kiyomizu-dera, Kyoto","city":"Kyoto"},"geometry":{"type":"Point","coordinates":[135.7850,34.9949]}},
+      {"type":"Feature","properties":{"name":"Arashiyama Bamboo Grove","city":"Kyoto"},"geometry":{"type":"Point","coordinates":[135.6777,35.0094]}},
+      {"type":"Feature","properties":{"name":"Tenryu-ji Temple","city":"Kyoto"},"geometry":{"type":"Point","coordinates":[135.6750,35.0090]}},
+      {"type":"Feature","properties":{"name":"Hiroshima Peace Memorial Park","city":"Hiroshima"},"geometry":{"type":"Point","coordinates":[132.4553,34.3955]}},
+      {"type":"Feature","properties":{"name":"Hiroshima Castle","city":"Hiroshima"},"geometry":{"type":"Point","coordinates":[132.4597,34.3970]}},
+      {"type":"Feature","properties":{"name":"Itsukushima Shrine, Miyajima","city":"Hiroshima"},"geometry":{"type":"Point","coordinates":[132.3190,34.2953]}},
+      {"type":"Feature","properties":{"name":"Daisho-in Temple, Miyajima","city":"Hiroshima"},"geometry":{"type":"Point","coordinates":[132.3090,34.2937]}},
+      {"type":"Feature","properties":{"name":"Glover Garden, Nagasaki","city":"Nagasaki"},"geometry":{"type":"Point","coordinates":[129.8754,32.7440]}},
+      {"type":"Feature","properties":{"name":"Nagasaki Peace Park","city":"Nagasaki"},"geometry":{"type":"Point","coordinates":[129.8660,32.7502]}},
+      {"type":"Feature","properties":{"name":"Mount Inasa, Nagasaki","city":"Nagasaki"},"geometry":{"type":"Point","coordinates":[129.8649,32.7471]}},
+      {"type":"Feature","properties":{"name":"Hakone Shrine","city":"Hakone"},"geometry":{"type":"Point","coordinates":[139.0254,35.2323]}},
+      {"type":"Feature","properties":{"name":"Lake Ashi","city":"Hakone"},"geometry":{"type":"Point","coordinates":[139.0333,35.2181]}},
+      {"type":"Feature","properties":{"name":"Owakudani","city":"Hakone"},"geometry":{"type":"Point","coordinates":[139.0245,35.2356]}},
+      {"type":"Feature","properties":{"name":"Hotel Groove Shinjuku, Tokyo","city":"Tokyo"},"geometry":{"type":"Point","coordinates":[139.6996,35.6900]}},
+      {"type":"Feature","properties":{"name":"Meiji Shrine, Tokyo","city":"Tokyo"},"geometry":{"type":"Point","coordinates":[139.6993,35.6764]}},
+      {"type":"Feature","properties":{"name":"Harajuku / Takeshita Street","city":"Tokyo"},"geometry":{"type":"Point","coordinates":[139.7036,35.6703]}},
+      {"type":"Feature","properties":{"name":"Shibuya Crossing & Hachiko","city":"Tokyo"},"geometry":{"type":"Point","coordinates":[139.7013,35.6595]}},
+      {"type":"Feature","properties":{"name":"Asakusa / Senso-ji","city":"Tokyo"},"geometry":{"type":"Point","coordinates":[139.7966,35.7148]}},
+      {"type":"Feature","properties":{"name":"Tokyo Tower","city":"Tokyo"},"geometry":{"type":"Point","coordinates":[139.7454,35.6586]}},
+      {"type":"Feature","properties":{"name":"Kotoku-in (Great Buddha), Kamakura","city":"Kamakura"},"geometry":{"type":"Point","coordinates":[139.5337,35.3163]}},
+      {"type":"Feature","properties":{"name":"Hasedera Temple, Kamakura","city":"Kamakura"},"geometry":{"type":"Point","coordinates":[139.5330,35.3168]}},
+      {"type":"Feature","properties":{"name":"Tsurugaoka Hachimangu, Kamakura","city":"Kamakura"},"geometry":{"type":"Point","coordinates":[139.5502,35.3278]}},
+      {"type":"Feature","properties":{"name":"Enkaku-ji Temple, Kamakura","city":"Kamakura"},"geometry":{"type":"Point","coordinates":[139.5650,35.3306]}},
+      {"type":"Feature","properties":{"name":"Komachi Street, Kamakura","city":"Kamakura"},"geometry":{"type":"Point","coordinates":[139.5485,35.3203]}}
+    ]
+  };
+
+  // Add GeoJSON to map with colored markers
+  L.geoJSON(tripData, {
+    pointToLayer: function(feature, latlng) {
+      return L.circleMarker(latlng, {
+        radius: 7,
+        fillColor: getColor(feature.properties.city),
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      });
+    },
+    onEachFeature: function(feature, layer) {
+      if (feature.properties && feature.properties.name) {
+        layer.bindPopup("<b>" + feature.properties.name + "</b><br>City: " + feature.properties.city);
+      }
+    }
+  }).addTo(map);
+
+</script>
+
+</body>
+</html>
